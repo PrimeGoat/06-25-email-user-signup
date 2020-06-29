@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Project For Code Immersives</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+		<link href="/css/login.css" rel="stylesheet">
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!------ Include the above in your HEAD tag ---------->
+	</head>
+	<body>
+		<div id="register">
+			<h3 class="text-center text-white pt-5">Registration form</h3>
+			<div class="container">
+					<div id="login-row" class="row justify-content-center align-items-center">
+					<div id="login-column" class="col-md-6">
+						<div class="login-box col-md-12">
+							<div class="text-info">
+								<% if (success.length) { %>
+									<%= success %><br><br>
+								<% } %>
+								<% if (errors.length) { %>
+									<%= errors %><br><br>
+								<% } %>
+							</div>
+								<form action="/register" method="POST" id="login-form" class="form">
+								<div class="form-group">
+									<label for="name" class="text-info">Name:</label><br>
+									<input type="text" name="name"  class="form-control"/>
+								</div>
+								<div class="form-group">
+									<label for="email" class="text-info">Email:</label>
+									<input type="text" name="email" />
+								</div>
+								<div class="form-group">
+									<label for="number" class="text-info">House #</label>
+									<input type="text" name="number" size=4 class="housenum"/>
+									<label for="streetName" class="text-info">Street</label>
+									<input type="text" name="streetName" />
+								</div>
+								<div class="form-group">
+									<label for="address2" class="text-info">Address2</label>
+									<input type="text" name="address2" />
+								</div>
+								<div class="form-group">
+									<label for="city" class="text-info">City:</label>
+									<input type="text" name="city" />
+								</div>
+								<div class="form-group">
+									<label for="state" class="text-info">State:</label>
+									<select id="state" name="state">
+										<option value="Alabama">Alabama</option>
+										<option value="Alaska">Alaska</option>
+										<option value="Arizona">Arizona</option>
+										<option value="Arkansas">Arkansas</option>
+										<option value="California">California</option>
+										<option value="Colorado">Colorado</option>
+										<option value="Connecticut">Connecticut</option>
+										<option value="Delaware">Delaware</option>
+										<option value="Florida">Florida</option>
+										<option value="Georgia">Georgia</option>
+										<option value="Hawaii">Hawaii</option>
+										<option value="Idaho">Idaho</option>
+										<option value="Illinois">Illinois</option>
+										<option value="Indiana">Indiana</option>
+										<option value="Iowa">Iowa</option>
+										<option value="Kansas">Kansas</option>
+										<option value="Kentucky">Kentucky</option>
+										<option value="Louisiana">Louisiana</option>
+										<option value="Maine">Maine</option>
+										<option value="Maryland">Maryland</option>
+										<option value="Massachusetts">Massachusetts</option>
+										<option value="Michigan">Michigan</option>
+										<option value="Minnesota">Minnesota</option>
+										<option value="Mississippi">Mississippi</option>
+										<option value="Missouri">Missouri</option>
+										<option value="Montana">Montana</option>
+										<option value="Nebraska">Nebraska</option>
+										<option value="Nevada">Nevada</option>
+										<option value="New Hampshire">New Hampshire</option>
+										<option value="New Jersey">New Jersey</option>
+										<option value="New Mexico">New Mexico</option>
+										<option value="New York">New York</option>
+										<option value="North Carolina">North Carolina</option>
+										<option value="North Dakota">North Dakota</option>
+										<option value="Ohio">Ohio</option>
+										<option value="Oklahoma">Oklahoma</option>
+										<option value="Oregon">Oregon</option>
+										<option value="Pennsylvania">Pennsylvania</option>
+										<option value="Rhode Island">Rhode Island</option>
+										<option value="South Carolina">South Carolina</option>
+										<option value="South Dakota">South Dakota</option>
+										<option value="Tennessee">Tennessee</option>
+										<option value="Texas">Texas</option>
+										<option value="Utah">Utah</option>
+										<option value="Vermont">Vermont</option>
+										<option value="Virginia">Virginia</option>
+										<option value="Washington">Washington</option>
+										<option value="West Virginia">West Virginia</option>
+										<option value="Wisconsin">Wisconsin</option>
+										<option value="Wyoming">Wyoming</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="zip" class="text-info">Zip Code:</label>
+									<input type="text" name="zip" size=9 />
+								</div>
+								<div class="form-group">
+									<button type="submit" class="btn btn-info btn-md">Register</button>
+								</div>
+								<div id="register-link" class="text-center">
+									<a href="/" class="text-info">Home</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
