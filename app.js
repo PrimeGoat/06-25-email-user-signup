@@ -16,7 +16,6 @@ const bcrypt = require('bcryptjs');
 const { nanoid } = require("nanoid");
 //const { x } = require("./myModule");
 const User = require('./models/User');
-const Address = require('./models/Address');
 require('./lib/passport');
 const mailjet = require ('node-mailjet')
 .connect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
@@ -34,7 +33,7 @@ app.use(session({
 	}),
 	cookie: {
 		secure: false,
-		maxAge: 1000 * 60 * 25
+		maxAge: 1000 * 60 * 5
 	}
 }))
 
@@ -113,6 +112,10 @@ app.get('/logout', (req, res) => {
 	res.redirect('/');
 })
 
+app.get('/changepassword', (req, res) => {
+	res.render('changepassword');
+});
+
 // const validateInput = (req, res, next) => {
 // 	const { email, password } = req.body;
 // 	if (!email || !password) {
@@ -135,8 +138,45 @@ const loginValidate = (req, res, next) => {
 		req.flash('errors', 'Invalid email or password');
 		return res.redirect('/login');
 	}
+	User.findOne({ email: req.body.email })
+	.then(user => {
+		if(user) {
+			if(user.mustChange) {
+				console.log(user.email + "Still needs to change their initial password.");
+				req.flash('errors', 'Must change your initial password');
+				return res.redirect('/changepassword');
+			}
+		}
+	});
+
 	next();
 };
+
+const changePassword = (req, res, next) => {
+	User.findOne({ email: req.body.email }).then(user => {
+		if(!user || !bcrypt.compareSync(req.oldPassword, user.password)) {
+			req.flash('errors', 'Invalid email or password');
+			return res.redirect('/changepassword');
+		}
+		const salt = bcrypt.genSaltSync(10);
+		user.password = bcrypt.hashSync(password, salt);
+		user.save()
+		.then({
+			next();
+		})
+		.catch(err => {
+			console.log("Error:", err)
+			next();
+		});
+	})
+	next();
+}
+
+app.post('/changepassword', changePassword, passport.authenticate('local-login', {
+	successRedirect: '/logged',
+	failureRedirect: '/login',
+	failureFlash: true
+}));
 
 app.post('/login', loginCheck, loginValidate, /*validateInput,*/ passport.authenticate('local-login', {
 	successRedirect: '/logged',
@@ -152,28 +192,33 @@ app.post('/register', (req, res) => {
 			//res.status(400).json({ message: 'User exists' });
 		} else {
 			const newUser = new User();
-			const newAddress = new Address();
 			const salt = bcrypt.genSaltSync(10);
 			let password = nanoid();
-			console.log(password);
+			console.log('Password:', password);
 			const hash = bcrypt.hashSync(password, salt);
 
 			newUser.name = req.body.name;
 			newUser.email = req.body.email;
 			newUser.password = hash;
+			newUser.address.number = req.body.number;
+			newUser.address.streetName = req.body.streetName;
+			newUser.address.address2 = req.body.address2;
+			newUser.address.city = req.body.city;
+			newUser.address.state = req.body.state;
+			newUser.address.zip = req.body.zip;
 
 			newUser.save().then(user => {
-				req.login(user, (err) => {
-					if(err) {
-						res.status(500).json({confirmation: false, message: 'Server error'});
-					} else {
+				// req.login(user, (err) => {
+				// 	if(err) {
+				// 		res.status(500).json({confirmation: false, message: 'Server error', error: err});
+				// 	} else {
 						// Send email with password.
 						mailjet
 						.post("send", {'version': 'v3.1'})
 						.request({
 							"Messages":[{
 								"From": {
-									"Email": "TOKENDOMELAKALEMARUZVALDARAZAMARANABRASKASKAMARANA-RLINOMARANA@mailjet.com",
+									"Email": "denis.savgir@codeimmersives.com",
 									"Name": "Feel the Power of Shao Khan"
 								},
 								"To": [{
@@ -181,19 +226,19 @@ app.post('/register', (req, res) => {
 									"Name": newUser.name
 								}],
 								"Subject": "Your temporary password",
-								"TextPart": "Welcome to KILLSITE.  Please log in with your temporary password and then update it to something more secure!",
-								"HTMLPart": "Welcome to KILLSITE.  Please log in with your temporary password and then update it to something more secure!"
+								"TextPart": "Welcome to KILLSITE.  Please log in with your temporary password and then update it to something more secure!  Your password is: " + password + "\nChange your password here: http://localhost:3000/changepassword",
+								"HTMLPart": "Welcome to KILLSITE.  Please log in with your temporary password and then update it to something more secure!  Your password is: " + password + "\nChange your password here: <a href=http://localhost:3000/changepassword>http://localhost:3000/changepassword</a>"
 							}]
-						})
-						.on('success', function (res, body) { console.log (body) })
-						.on('error', function (err) {
-							req.flash('errors', err);
-							return res.redirect(301, '/register');
 						});
+						// .on('success', function (res, body) { console.log (body) })
+						// .on('error', function (err) {
+						// 	req.flash('errors', err);
+						// 	return res.redirect(301, '/register');
+						// });
 
 						res.redirect('/thankyou');
-					}
-				});
+//					}
+//				});
 				//res.status(200).json({ message: 'User created: ', user});
 			}).catch(err => console.log('Error: ', err));
 		}
